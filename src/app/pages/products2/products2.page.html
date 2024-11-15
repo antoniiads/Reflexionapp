@@ -1,0 +1,97 @@
+<ion-header>
+  <!-- Toolbar principal con el título y el icono de búsqueda -->
+  <ion-toolbar>
+    <app-header backButon="/inicio" title="Libros"></app-header>
+    <ion-buttons slot="end">
+      <!-- Botón de búsqueda -->
+      <ion-button (click)="toggleSearchBar()">
+        <ion-icon name="search-outline"></ion-icon>
+      </ion-button>
+
+      <!-- Botón de filtro -->
+      <ion-button (click)="toggleCategoryFilter()">
+        <ion-icon name="funnel-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+
+  <!-- Toolbar con el searchbar que aparece solo si `showSearchBar` es true -->
+  <ion-toolbar *ngIf="showSearchBar">
+    <ion-searchbar 
+      [(ngModel)]="searchText" 
+      (ionInput)="searchProducts()" 
+      debounce="300" 
+      placeholder="Escribe el nombre del libro">
+    </ion-searchbar>
+  </ion-toolbar>
+
+  <!-- Filtro de categoría que se muestra solo si `showCategoryFilter` es true -->
+  <ion-toolbar *ngIf="showCategoryFilter">
+    <ion-item lines="none">
+      
+      <ion-select 
+        [(ngModel)]="selectedCategory" 
+        (ionChange)="filterProducts()" 
+        placeholder="Seleccionar categoría">
+        <ion-select-option value="Romance/Drama">Romance/Drama</ion-select-option>
+        <ion-select-option value="Ciencia/Ficcion">Ciencia/Ficción</ion-select-option>
+        <ion-select-option value="Misterio/Thriller">Misterio/Thriller</ion-select-option>
+        <ion-select-option value="Poesia">Poesía</ion-select-option>
+        <ion-select-option value="Fantasia">Fantasía</ion-select-option>
+        <ion-select-option value="Historia">Historia</ion-select-option>
+      </ion-select>
+
+      <!-- Botón para limpiar el filtro -->
+      <ion-button fill="clear" color="medium" (click)="clearFilter()" class="clear-filter-button">
+        Limpiar
+      </ion-button>
+    </ion-item>
+  </ion-toolbar>
+</ion-header>
+
+
+
+
+<ion-content>
+  <!-- Buscador -->
+   
+
+  <!-- Template de carga para mostrar mientras loading es true -->
+  <ng-template #loadingTemplate>
+    <div class="loading-container">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Cargando productos...</p>
+    </div>
+  </ng-template>
+
+  <!-- Mostrar productos si no está cargando -->
+  <div *ngIf="!loading; else loadingTemplate" class="product-grid">
+    <ion-card *ngFor="let product of filteredProducts" class="product-card">
+      <div class="product-image-container">
+        <img [src]="product.image" alt="Imagen del producto" class="product-image" />
+      </div>
+      <ion-card-content>
+        <h2>{{ product.name }}</h2>
+        <p><strong>Categoría:</strong> {{ product.categoria }}</p>
+        <p><strong>Descripción:</strong> {{ product.descripcion }}</p>
+
+                <!-- Botón para ver reflexiones -->
+                <ion-button 
+                expand="block" 
+                (click)="verReflexiones()"
+        
+                class="ion-margin-top"
+                mode="ios"
+                fill="outline">
+                  Ver Reflexiones
+                </ion-button>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <!-- Mostrar mensaje si no hay productos -->
+  <div *ngIf="!loading && !filteredProducts.length" class="empty">
+    <ion-icon name="shield-outline"></ion-icon>
+    <h3>No hay productos</h3>
+  </div>
+</ion-content>
